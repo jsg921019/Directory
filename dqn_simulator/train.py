@@ -28,7 +28,7 @@ param_dict = {
     'mem_maxlen' : 10000,
 
     'eps_init' : 1.0,
-    'eps_min' : 0.1,
+    'eps_min' : 0.05,
 
     'skip_frame' : 1,
     'stack_frame' : 1

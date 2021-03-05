@@ -80,10 +80,13 @@ class Car(object):
     def check_collision(self):
         hitbox = self.transform(self.hitbox)
         x, y = get_pixels_rect(hitbox)
-        if np.any(self.map.img[y, x, 1] == 0):
+        try:
+            if np.any(self.map.img[y, x, 1] == 0):
+                return True
+            else:
+                return False
+        except:
             return True
-        else:
-            return False
 
     def check_goal(self):
         if 150 <= self.map.img[int(self.y), int(self.x), 1] < 200 :
