@@ -19,6 +19,8 @@ class Recoder(object):
         #orientation = msg.pose.pose.orientation
         x = position.x
         y = position.y
+        # _, _, yaw = euler_from_quaternion((orientation.x, orientation.y, orientation.z, orientation.w))
+        #print(round(x,2), round(y,2), round(math.degrees(yaw), 2))
         if self.recording:
             if not self.cache:
                 print('start recoding')
@@ -39,5 +41,4 @@ if __name__ == "__main__":
     rospy.init_node('odom_read')
     recorder = Recoder()
     rospy.spin()
-# _, _, yaw = euler_from_quaternion((orientation.x, orientation.y, orientation.z, orientation.w))
-#print(round(x,2), round(y,2), round(math.degrees(yaw), 2))
+

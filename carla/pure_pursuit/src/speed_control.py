@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from carla_msgs import msg
 import rospy
 import rospkg
 from std_msgs.msg import Float32
@@ -11,10 +10,7 @@ from tf.transformations import euler_from_quaternion
 import numpy as np
 import pickle
 
-def sigmoid(speed):
-    return 1 / (1 + math.exp(-speed))
-
-class SpeedController(object):
+class Controller(object):
 
     def __init__(self, ref, target_speed=4.0):
         self.ref = ref
@@ -48,9 +44,10 @@ class SpeedController(object):
         self.nearest_idx = np.argmin(np.hypot(self.x-self.ref[:,0], self.y-self.ref[:,1]))
 
     def update_idx(self):
-        search_min = self.nearest_idx
-        search_max = self.nearest_idx + 50
-        self.nearest_idx += np.argmin(np.hypot(self.x-self.ref[search_min:search_max,0], self.y-self.ref[search_min:search_max,1]))
+        self.nearest_idx = np.argmin(np.hypot(self.x-self.ref[:,0], self.y-self.ref[:,1]))
+        # search_min = self.nearest_idx
+        # search_max = self.nearest_idx + 50
+        # self.nearest_idx += np.argmin(np.hypot(self.x-self.ref[search_min:search_max,0], self.y-self.ref[search_min:search_max,1]))
 
     def control_speed(self):
         error = self.speed - self.target_speed
@@ -67,14 +64,15 @@ class SpeedController(object):
     
     def control_steer(self):
         look_ahead_point = self.ref[self.nearest_idx+self.look_ahead_dist] - np.array([self.x, self.y])
-        theta = self.yaw - np.radians(90)
-        rotation_matrix = np.array([[np.cos(theta), -np.sin(theta)],[np.sin(theta), np.cos(theta)]])
+        print(look_ahead_point)
+        theta = self.yaw
+        rotation_matrix = np.array([[np.cos(theta), np.sin(theta)],[-np.sin(theta), np.cos(theta)]])
         x, y = np.matmul(rotation_matrix, look_ahead_point)
-        self.msg.steer = 1.0* np.arctan2(2.0*2*x, x*x + y*y)
+        self.msg.steer = -1.0* np.arctan2(2.0*2*y, x*x + y*y)
 
     def control(self):
         self.update_idx()
-        print(self.nearest_idx)
+
         self.control_speed()
         self.control_steer()
         self.pub.publish(self.msg)
@@ -89,13 +87,11 @@ if __name__ == "__main__":
 
     # inits
     rospy.init_node("speed_control")
-    speed_controller = SpeedController(ref)
+    speed_controller = Controller(ref)
     rospy.sleep(2)
-    speed_controller.init_idx() 
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(5)
 
     # main loop
     while not rospy.is_shutdown():
-        
         speed_controller.control()
         rate.sleep()
