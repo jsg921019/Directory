@@ -30,14 +30,14 @@ class Controller(object):
         # speed control params
         self.target_speed = target_speed
         self.kp = 1.0
-        self.kd = 1.5
-        self.ki = 0.03
+        self.kd = 0.3
+        self.ki = 0.014
         self.error_sum = 0
         self.error_prev = 0
         self.dt = 1.0 / hz
 
         # steer control params
-        self.look_ahead_dist = 50
+        self.look_ahead_dist = 25
         self.nearest_idx = None
 
         # ros publishers and subscribers
@@ -57,12 +57,11 @@ class Controller(object):
         self.yaw = euler_from_quaternion((orientation.x, orientation.y, orientation.z, orientation.w))[2]
 
     def control_speed(self):
-        print(self.speed, self.error_sum)
         error = self.speed - self.target_speed
         d_error = (error-self.error_prev)/self.dt
         self.msg.throttle = np.clip(-self.kp * error  -self.kd*d_error - self.ki*self.error_sum, 0, 1)
         self.error_sum += error * self.dt
-        self.error_sum = np.clip(self.error_sum,-20,20)
+        self.error_sum = np.clip(self.error_sum,-40,40)
         self.error_prev = error
 
     def control_steer(self):
@@ -80,14 +79,17 @@ class Controller(object):
 
 if __name__ == "__main__":
 
+    # parmams
+    hz = 5
+    ref_file = 'ref2.pickle'
+
     # load reference path
     rospack = rospkg.RosPack()
-    ref_path = rospack.get_path('pure_pursuit') + '/src/ref.pickle'
+    ref_path = rospack.get_path('pure_pursuit') + '/src/' + ref_file
     with open(ref_path, "rb") as f:
         ref = pickle.load(f)
 
     # inits
-    hz = 5
     rospy.init_node("speed_control")
     speed_controller = Controller(ref=ref, hz=hz)
     rate = rospy.Rate(hz)

@@ -10,6 +10,7 @@ import pickle
 class Recoder(object):
 
     def __init__(self):
+        self.resolution = 0.2
         self.cache = []
         self.recording = True
         self.sub = rospy.Subscriber('/carla/ego_vehicle/odometry', Odometry, self.callback, queue_size=1)
@@ -28,13 +29,13 @@ class Recoder(object):
                 self.x0, self.y0 = x, y
             else:
                 _x, _y = self.cache[-1]
-                if len(self.cache) > 100 and np.hypot(x-self.x0, y-self.y0) < 0.1:
+                if len(self.cache) > 100 and np.hypot(x-self.x0, y-self.y0) < self.resolution:
                     self.recording = False
-                    with open("ref.pickle","wb") as f:
+                    with open("ref2.pickle","wb") as f:
                         pickle.dump(np.array(self.cache), f)
                     print('finished recording')
 
-                elif np.hypot(x-_x, y-_y) >= 0.1:
+                elif np.hypot(x-_x, y-_y) >= self.resolution:
                     recorder.cache.append([x, y])
 
 if __name__ == "__main__":
