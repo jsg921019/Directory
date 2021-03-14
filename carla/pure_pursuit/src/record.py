@@ -38,7 +38,7 @@ class Recoder(object):
                     recorder.cache.append([x, y])
 
 if __name__ == "__main__":
-    rospy.init_node('odom_read')
+    rospy.init_node('record')
     recorder = Recoder()
     rospy.spin()
 

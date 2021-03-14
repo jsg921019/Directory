@@ -22,7 +22,7 @@
             "id": "map"
         },
         {
-            "type": "vehicle.*",
+            "type": "vehicle.lincoln.mkz2017",
             "id": "ego_vehicle",
             "sensors": 
             [

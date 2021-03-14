@@ -12,19 +12,35 @@ import pickle
 
 class Controller(object):
 
-    def __init__(self, ref, target_speed=4.0):
+    def __init__(self, ref, hz, target_speed=12.0):
+
+        # reference path
         self.ref = ref
-        self.look_ahead_dist = 50
-        self.target_speed = target_speed
-        self.speed = None
+
+        # car info
+        self.max_steer_angle = 1.22173035145
+        self.wb = 2.85
+
+        # car state
         self.x = None
         self.y = None
         self.yaw = None
+        self.speed = None
+
+        # speed control params
+        self.target_speed = target_speed
+        self.kp = 1.0
+        self.kd = 1.5
+        self.ki = 0.03
+        self.error_sum = 0
+        self.error_prev = 0
+        self.dt = 1.0 / hz
+
+        # steer control params
+        self.look_ahead_dist = 50
         self.nearest_idx = None
-        self.kt = 0.5
-        self.kb = 0.04
-        self.p = 0.003
-        self.sum_error = 0
+
+        # ros publishers and subscribers
         self.msg = CarlaEgoVehicleControl()
         self.sub_speed = rospy.Subscriber('/carla/ego_vehicle/speedometer', Float32, self.callback_speed, queue_size=1)
         self.sub_odom = rospy.Subscriber('/carla/ego_vehicle/odometry', Odometry, self.callback_odom, queue_size=1)
@@ -40,39 +56,24 @@ class Controller(object):
         self.y = position.y
         self.yaw = euler_from_quaternion((orientation.x, orientation.y, orientation.z, orientation.w))[2]
 
-    def init_idx(self):
-        self.nearest_idx = np.argmin(np.hypot(self.x-self.ref[:,0], self.y-self.ref[:,1]))
-
-    def update_idx(self):
-        self.nearest_idx = np.argmin(np.hypot(self.x-self.ref[:,0], self.y-self.ref[:,1]))
-        # search_min = self.nearest_idx
-        # search_max = self.nearest_idx + 50
-        # self.nearest_idx += np.argmin(np.hypot(self.x-self.ref[search_min:search_max,0], self.y-self.ref[search_min:search_max,1]))
-
     def control_speed(self):
+        print(self.speed, self.error_sum)
         error = self.speed - self.target_speed
-        if error <= 0:
-            self.msg.brake = 0
-            self.msg.throttle = min(1, -self.kt* error - self.p*self.sum_error)
-        elif error <= 1:
-            self.msg.brake = 0
-            self.msg.throttle = 0.5
-        else:
-            self.msg.brake = min(1, self.kb* (error-1))
-            self.msg.throttle = 0
-        self.sum_error += error
-    
+        d_error = (error-self.error_prev)/self.dt
+        self.msg.throttle = np.clip(-self.kp * error  -self.kd*d_error - self.ki*self.error_sum, 0, 1)
+        self.error_sum += error * self.dt
+        self.error_sum = np.clip(self.error_sum,-20,20)
+        self.error_prev = error
+
     def control_steer(self):
-        look_ahead_point = self.ref[self.nearest_idx+self.look_ahead_dist] - np.array([self.x, self.y])
-        print(look_ahead_point)
-        theta = self.yaw
-        rotation_matrix = np.array([[np.cos(theta), np.sin(theta)],[-np.sin(theta), np.cos(theta)]])
+        nearest_idx = np.argmin(np.hypot(self.x-self.ref[:,0], self.y-self.ref[:,1]))
+        look_ahead_idx = (nearest_idx+self.look_ahead_dist)%len(self.ref)
+        look_ahead_point = self.ref[look_ahead_idx] - np.array([self.x, self.y])
+        rotation_matrix = np.array([[np.cos(self.yaw), np.sin(self.yaw)],[-np.sin(self.yaw), np.cos(self.yaw)]])
         x, y = np.matmul(rotation_matrix, look_ahead_point)
-        self.msg.steer = -1.0* np.arctan2(2.0*2*y, x*x + y*y)
+        self.msg.steer = -(1/self.max_steer_angle) * np.arctan2(2 * self.wb * y, x*x + y*y)
 
     def control(self):
-        self.update_idx()
-
         self.control_speed()
         self.control_steer()
         self.pub.publish(self.msg)
@@ -86,10 +87,16 @@ if __name__ == "__main__":
         ref = pickle.load(f)
 
     # inits
+    hz = 5
     rospy.init_node("speed_control")
-    speed_controller = Controller(ref)
-    rospy.sleep(2)
-    rate = rospy.Rate(5)
+    speed_controller = Controller(ref=ref, hz=hz)
+    rate = rospy.Rate(hz)
+
+    # start
+    for i in range(3):
+        rospy.sleep(1)
+        print(3-i)
+    print('start!')
 
     # main loop
     while not rospy.is_shutdown():
