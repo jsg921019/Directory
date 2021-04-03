@@ -1,0 +1,58 @@
+<launch>
+
+  <!-- usb_cam -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/videoCAM" />
+    <param name="autoexposure" value="false"/>
+    <param name="exposure" value="50"/>
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="pixel_format"     value="yuyv"                                         />
+    <param name="camera_frame_id"  value="usb_cam"                                      />
+    <param name="camera_name"      value="usb_cam"                                      />
+    <param name="camera_info_url"  value="file://$(find project3)/src/usb_cam.yaml"  />
+    <param name="io_method" value="mmap"/>
+  </node>
+
+  <!-- ar tag -->
+  <node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen">
+    <param name="marker_size"                type="double" value="9.0" />
+    <param name="max_new_marker_error"       type="double" value="0.05" />
+    <param name="max_track_error"            type="double" value="0.05" />
+    <param name="output_frame"               type="string" value="usb_cam" />
+    <remap from="camera_image" to="/usb_cam/image_raw"/>
+    <remap from="camera_info" to="/usb_cam/camera_info"/>
+  </node>
+
+  <!-- lidar -->
+  <node name="ydlidar_node"  pkg="ydlidar_ros"  type="ydlidar_node" output="screen" respawn="false" >
+    <param name="port"         type="string" value="/dev/ttyRPL"/>  
+    <param name="baudrate"         type="int" value="230400"/>  
+    <param name="frame_id"     type="string" value="laser_frame"/>
+    <param name="resolution_fixed"    type="bool"   value="true"/>
+    <param name="auto_reconnect"    type="bool"   value="true"/>
+    <param name="reversion"    type="bool"   value="true"/>
+    <param name="angle_min"    type="double" value="-180" />
+    <param name="angle_max"    type="double" value="180" />
+    <param name="range_min"    type="double" value="0.1" />
+    <param name="range_max"    type="double" value="16.0" />
+    <param name="ignore_array" type="string" value="" />
+    <param name="frequency"    type="double" value="10"/>
+    <param name="samp_rate"    type="int"    value="5"/>
+  </node>
+
+  <!-- imu -->
+  <node pkg="xycar_imu" type="9dof_imu_node.py" name="xycar_imu" output="screen">
+    <param name="rviz_mode" type="string" value="false" />
+  </node>
+
+  <!-- motor -->
+  <node name="xycar_motor_b2" pkg="xycar_motor" type="xycar_motor.py" output="screen" >
+    <param name="angle_offset" value="0" />
+  </node>
+
+  <!-- main script -->
+  <node name="auto-drive" pkg="project3" type="main.py" output="screen"/>
+
+</launch>

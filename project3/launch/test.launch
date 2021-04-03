@@ -1,0 +1,11 @@
+<launch>
+  <!-- steer img -->
+  <param name="steer_img"  value="$(find project3)/src/test/steer.png"/>
+
+  <!-- rosbag -->
+  <node name="rosbag" pkg="rosbag" type="play" args="-l $(find project3)/bag/record.bag"/>
+
+  <!-- test script -->
+  <node name="test" pkg="project3" type="test.py" output="screen"/>
+
+</launch>
