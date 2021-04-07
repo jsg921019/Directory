@@ -5,7 +5,7 @@
 ![ros](https://img.shields.io/badge/ros-kinetic-green?logo=ROS)
 ![ros](https://img.shields.io/badge/ros-melodic-skyblue?logo=ROS)
 
-
+<br>
 
 ## 01. ABOUT US
 
@@ -16,7 +16,7 @@
 | 김민경       | 정지선 인식 | 느낀점을 간단하게 써봅시다 |
 | 임우섭       | 주차 | 느낀점을 간단하게 써봅시다 |
 
-
+<br>
 
 ## 02. 프로젝트 목표
 [자율주행 데브코스 1기 교육과정 소개](https://github.com/jsg921019/Directory)
@@ -29,51 +29,20 @@
 >
 > 학습한 내용을 기반으로 자율 주행 자동차 경진 대회 참가로 최종 프로젝트 수행
 
-  
+<br>
 
-## 03. 프로젝트 개요
+## 03. 프로젝트 목록
 <p align="center"><img src="https://grepp-cloudfront.s3.ap-northeast-2.amazonaws.com/programmers_imgs/learn/course-10822/sec05_img02.png" style="zoom:33%;" />
 <img src="https://grepp-cloudfront.s3.ap-northeast-2.amazonaws.com/programmers_imgs/learn/course-10822/sec05_img03.png" alt="XycarA2" style="zoom:33%;" /></p>
 
 ### Project 1: 차선 인식 주행
 
-- 내용을 써봅시다
+- [노션 페이지에서 보기](https://www.notion.so/1-13e53617481f4baf83dfd3e7d4f52caf)
 
 ###  Project 2: 장애물 회피
 
-- 내용을 써봅시다
+- [노션 페이지에서 보기](https://www.notion.so/2-920963504e8a4e5c8ac666052b3d00b4)
 
 ###  Project 3: Final
 
-- 내용을 써봅시다
-
-## 04. 결과물
-
-
-
-## Git CLI 간단한 사용법
-
-* 깃허브 저장소로 로컬에 복제
-`git clone https://github.com/jsg921019/Directory.git [Directory 대신 사용할 저장소 이름]`
-
-* 브랜치 생성
-`git branch <branch 이름>`
-
-* 브랜치로 이동
-`git checkout <아까 만든 branch 혹은 원하는 branch>`
-
-
-* 로컬 저장소에서 커밋할 항목 add
-`git add <file>` : 특정 파일만
-`git add .` : 현재 pwd의 모든 파일
-
-* add한것들 commit하기
-`git commit -m "커밋 메시지"`
-
-* 로컬에서 커밋한 내용 깃허브에 올리기
-`git push origin <branch 이름>`
-
-* pull request는 그냥 깃헙에서 하면 될듯?
-
-* 화이팅!
-
+- [project3 README](project3/README.md)

@@ -4,7 +4,7 @@
 <p align="center">
   <img src="img/logo.png" alt="Logo" width="640" height="180">
   <h3 align="center">월간 프로젝트 3</h3>
-  <p align="center">
+  <!--<p align="center">
     An awesome README template to jumpstart your projects!
     <br />
     <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
@@ -14,7 +14,7 @@
     ·
     <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>-->
   </p>
 </p>
 
@@ -107,9 +107,9 @@ project3/main
 
 * 기존 방식의 문제점
 
-  1. 단순 P제어만을 쓴 경우 oscillation이 크다 (속도 25 이상에서 매우 불안정)
-  2. 정적 ROI를 사용하여 양쪽 차선만을 검출하므로 급격하게 꺾이는 코너나 S자 코스에서 차선을 놓치는 경우가 발생.
-  3. 조명에 의해 도로에서 반사되는 빛에 취약
+  * 단순 P제어만을 쓴 경우 oscillation이 크다 (속도 25 이상에서 매우 불안정)
+  * 정적 ROI를 사용하여 양쪽 차선만을 검출하므로 급격하게 꺾이는 코너나 S자 코스에서 차선을 놓치는 경우가 발생.
+  * 조명에 의해 도로에서 반사되는 빛에 취약
 
 * 개선 방향
 
