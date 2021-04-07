@@ -4,7 +4,7 @@
 import rospy
 from Xycar import Xycar
 
-rospy.init_node('lane_detection')
+rospy.init_node('test')
 
 xycar = Xycar()
 
