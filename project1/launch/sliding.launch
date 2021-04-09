@@ -1,0 +1,29 @@
+<launch>
+    <!--rosbag-->
+    <node name="usb_cam" pkg="rosbag" type="play" args="-l -q $(find line_drive)/src/cam_topic.bag"/>
+    
+    <!-- cam 
+    <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="/dev/videoCAM" />
+        <param name="autoexposure" value="false"/>
+        <param name="exposure" value="100"/>
+        <param name="image_width" value="640" />
+        <param name="image_height" value="480" />
+        <param name="pixel_format" value="yuyv" />
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+    </node>-->
+
+    <!-- motor -->
+    <node name="xycar_motor_a2" pkg="xycar_motor" type="xycar_motor_a2.py" output="screen" >
+        <param name="angle_offset" value="0" />
+    </node>
+    
+    <!-- opencv -->
+    <node name="sliding" pkg="auto_drive" type="sliding_find.py" output="screen" required="true"/>
+
+    <!-- driver -->
+    <node name="driver" pkg="auto_drive" type="hough_driver.py" output="screen" />
+
+
+</launch>
